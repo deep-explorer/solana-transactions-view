@@ -73,11 +73,13 @@ function Row({ transaction }: { transaction: Transaction }) {
 export const CollapsibleTable = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    fetch();
+  }, []);
 
   const fetch = async () => {
     const response = await axios.get(
-      "https://svc.blockdaemon.com/universal/v1/solana/mainnet/account/rFqFJ9g7TGBD8Ed7TPDnvGKZ5pWLPDyxLcvcH2eRCtt/txs?page_size=100",
+      "https://svc.blockdaemon.com/universal/v1/solana/mainnet/account/rFqFJ9g7TGBD8Ed7TPDnvGKZ5pWLPDyxLcvcH2eRCtt/txs?page_size=50",
       {
         headers: {
           Authorization:
@@ -85,23 +87,25 @@ export const CollapsibleTable = () => {
         },
       }
     );
-    console.log(response);
+    setTransactions(response.data.data);
   };
   return (
-    <table>
-      <thead>
-        <tr>
-          <th className="w-1/2">Signature</th>
-          <th className="w-1/6">Block</th>
-          <th className="w-1/6">Time</th>
-          <th className="w-1/6">Fee (SOL)</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map((transaction) => (
-          <Row key={transaction.id} transaction={transaction} />
-        ))}
-      </tbody>
-    </table>
+    <div className="m-5 flex bg-slate-600">
+      <table className="table-auto w-[100%]">
+        <thead className="">
+          <tr>
+            <th className="w-1/2">Signature</th>
+            <th className="w-1/6">Block</th>
+            <th className="w-1/6">Time</th>
+            <th className="w-1/6">Fee (SOL)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {transactions.map((transaction) => (
+            <Row key={transaction.id} transaction={transaction} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
