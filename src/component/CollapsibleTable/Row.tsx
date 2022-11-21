@@ -6,7 +6,35 @@ export const Row = ({ transaction }: { transaction: Transaction }) => {
   const duration = Math.floor(
     (new Date().getTime() / 1000 - transaction.date) / 60
   ); //  in minute
+  const accountAddress = "rFqFJ9g7TGBD8Ed7TPDnvGKZ5pWLPDyxLcvcH2eRCtt"; //  get from context
 
+  let status;
+  if (transaction.events.length === 1) {
+    status = (
+      <div className="flex text-red-500 justify-center items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-6 h-6">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+          />
+        </svg>
+        <span>FAIL</span>
+      </div>
+    );
+  } else {
+    if (transaction.events[0].source === accountAddress) {
+      status = <span className="text-yellow-500">OUT</span>;
+    } else {
+      status = <span className="text-green-500">IN</span>;
+    }
+  }
   return (
     <React.Fragment>
       <tr
@@ -16,6 +44,7 @@ export const Row = ({ transaction }: { transaction: Transaction }) => {
           (open ? " bg-gray-100" : "")
         }>
         <td className="py-4 px-6">{transaction.id.slice(0, 22) + "..."}</td>
+        <td className="py-4 px-6 text-center">{status}</td>
         <td className="py-4 px-6">{transaction.block_number}</td>
         <td className="py-4 px-6">
           {transaction.events[0].amount /
@@ -51,10 +80,12 @@ export const Row = ({ transaction }: { transaction: Transaction }) => {
               <table className="w-full text-base text-left text-gray-500 border-2 ">
                 <thead className="text-gray-700 uppercase bg-gray-200">
                   <tr>
-                    <th className="w-[35%] py-1 px-6">From</th>
-                    <th className="w-[35%] py-1 px-6">To</th>
-                    <th className="w-[35%] py-1 px-6">Time</th>
-                    <th className="w-[15%] py-1 px-6">Action Type</th>
+                    <th className="w-[25%] py-1 px-6">From</th>
+                    <th className="w-[25%] py-1 px-6">To</th>
+                    <th className="w-[20%] py-1 px-6 text-center">Time</th>
+                    <th className="w-[20%] py-1 px-6 text-center">
+                      Action Type
+                    </th>
                     <th className="w-[15%] py-1 px-6">Amount</th>
                   </tr>
                 </thead>
@@ -62,21 +93,27 @@ export const Row = ({ transaction }: { transaction: Transaction }) => {
                   {transaction.events.map((detail) => (
                     <tr
                       key={detail.id}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <td className="py-2 px-6">
+                      className={
+                        `bg-white border-b dark:bg-gray-800 dark:border-gray-700 ` +
+                        (accountAddress === detail.source ||
+                        accountAddress === detail.destination
+                          ? " bg-yellow-200"
+                          : "")
+                      }>
+                      <td className="py-2 px-2">
                         {detail.source && detail.source.slice(0, 22) + "..."}
                       </td>
-                      <td className="py-2 px-6">
+                      <td className="py-2 px-2">
                         {detail.destination &&
                           detail.destination.slice(0, 22) + "..."}
                       </td>
-                      <td className="py-2 px-4">
+                      <td className="py-2 px-2 text-center">
                         {duration
                           ? duration + " minutes ago"
                           : "less than 1 minute ago"}
                       </td>
-                      <td className="py-2 px-6">{detail.type}</td>
-                      <td className="py-2 px-6">
+                      <td className="py-2 px-2 text-center">{detail.type}</td>
+                      <td className="py-2 px-2 text-right">
                         {detail.amount / Math.pow(10, detail.decimals)}
                       </td>
                     </tr>

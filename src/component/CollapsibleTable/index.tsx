@@ -41,8 +41,9 @@ export const CollapsibleTable = () => {
       <table className="w-full text-lg text-left text-gray-500 border-2">
         <thead className="text-gray-700 uppercase bg-gray-300">
           <tr>
-            <th className="w-[32%] py-3 px-6">Signature</th>
-            <th className="w-[10%] py-3 px-6">Block</th>
+            <th className="w-[40%] py-3 px-6">Signature</th>
+            <th className="w-[15%] py-3 px-6 text-center">Status</th>
+            <th className="w-[25%] py-3 px-6">Block</th>
             <th className="w-[15%] py-3 px-6">Fee(SOL)</th>
             <th className="w-[5%] py-3 px-6"></th>
           </tr>
